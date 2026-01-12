@@ -1,0 +1,27 @@
+services:
+  piper:
+    image: rhasspy/wyoming-piper:latest
+    container_name: brko-piper
+    command: >
+      --voice en_US-lessac-medium
+    ports:
+      - "10200:10200"
+    restart: unless-stopped
+
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    container_name: brko-whisper
+    ports:
+      - "10300:5000"
+    restart: unless-stopped
+
+  backend:
+    build: .
+    container_name: brko-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - piper
+      - whisper
+    restart: unless-stopped
+

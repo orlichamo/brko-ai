@@ -1,0 +1,1 @@
+{"error":"HTTPConnectionPool(host='brko-piper', port=10200): Max retries exceeded with url: /synthesize (Caused by NameResolutionError(\"HTTPConnection(host='brko-piper', port=10200): Failed to resolve 'brko-piper' ([Errno -3] Temporary failure in name resolution)\"))"}

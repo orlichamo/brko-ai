@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+requests
+soundfile
+numpy
+TTS==0.22.0

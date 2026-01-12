@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+edge-tts
+openai
+psycopg2-binary
+redis
+python-dotenv
