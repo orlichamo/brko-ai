@@ -1,21 +1,24 @@
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse, JSONResponse
-from TTS.api import TTS
 import uuid
 import os
 
 app = FastAPI(title="Brko TTS Backend", version="0.1.0")
 
-# Render writable dir
 AUDIO_DIR = "audio"
 os.makedirs(AUDIO_DIR, exist_ok=True)
 
-# Load TTS model (Python-only, Render compatible)
-tts = TTS(
-    model_name="tts_models/en/vctk/vits",
-    progress_bar=False,
-    gpu=False
-)
+tts = None
+
+def load_tts():
+    global tts
+    if tts is None:
+        from TTS.api import TTS
+        tts = TTS(
+            model_name="tts_models/en/vctk/vits",
+            progress_bar=False,
+            gpu=False
+        )
 
 @app.get("/")
 def health():
@@ -26,13 +29,12 @@ def tts_endpoint(
     text: str = Query(..., min_length=1, max_length=500)
 ):
     try:
+        load_tts()
+
         filename = f"{uuid.uuid4()}.wav"
         filepath = os.path.join(AUDIO_DIR, filename)
 
-        tts.tts_to_file(
-            text=text,
-            file_path=filepath
-        )
+        tts.tts_to_file(text=text, file_path=filepath)
 
         return FileResponse(
             filepath,
@@ -45,4 +47,3 @@ def tts_endpoint(
             status_code=500,
             content={"error": str(e)}
         )
-
