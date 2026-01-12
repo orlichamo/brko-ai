@@ -1,7 +1,5 @@
 fastapi
-uvicorn[standard]
-edge-tts
-openai
-psycopg2-binary
-redis
-python-dotenv
+uvicorn
+TTS=0.22.0
+soundfile
+numpy
