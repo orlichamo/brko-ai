@@ -47,3 +47,8 @@ def tts_endpoint(
             status_code=500,
             content={"error": str(e)}
         )
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b2f0a3d (Fix Render deploy: Python 3.10 + Coqui TTS)

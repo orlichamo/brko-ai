@@ -1,5 +1,9 @@
 fastapi
 uvicorn
+<<<<<<< HEAD
 TTS=0.22.0
+=======
+TTS==0.22.0
+>>>>>>> b2f0a3d (Fix Render deploy: Python 3.10 + Coqui TTS)
 soundfile
 numpy
