@@ -4,34 +4,38 @@ from TTS.api import TTS
 import uuid
 import os
 
-app = FastAPI(
-    title="Brko TTS Backend",
-    version="0.1.0"
+app = FastAPI(title="Brko TTS Backend", version="0.1.0")
+
+# Render writable dir
+AUDIO_DIR = "audio"
+os.makedirs(AUDIO_DIR, exist_ok=True)
+
+# Load TTS model (Python-only, Render compatible)
+tts = TTS(
+    model_name="tts_models/en/vctk/vits",
+    progress_bar=False,
+    gpu=False
 )
-
-# Cache model u /tmp (Render dozvoljava)
-TTS_MODEL = "tts_models/en/ljspeech/tacotron2-DDC"
-
-tts = TTS(model_name=TTS_MODEL, progress_bar=False, gpu=False)
 
 @app.get("/")
 def health():
-    return "Brko je živ i priča 🇭🇷"
+    return "Brko je ziv i prica 🇭🇷"
 
 @app.post("/tts")
 def tts_endpoint(
     text: str = Query(..., min_length=1, max_length=500)
 ):
     try:
-        filename = f"/tmp/brko_{uuid.uuid4().hex}.wav"
+        filename = f"{uuid.uuid4()}.wav"
+        filepath = os.path.join(AUDIO_DIR, filename)
 
         tts.tts_to_file(
             text=text,
-            file_path=filename
+            file_path=filepath
         )
 
         return FileResponse(
-            filename,
+            filepath,
             media_type="audio/wav",
             filename="brko.wav"
         )
