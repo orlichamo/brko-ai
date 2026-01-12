@@ -1,39 +1,34 @@
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse, JSONResponse
-import subprocess
+from TTS.api import TTS
 import uuid
 import os
 
-app = FastAPI(title="Brko TTS Backend")
+app = FastAPI(
+    title="Brko TTS Backend",
+    version="0.1.0"
+)
 
-TMP_DIR = "/tmp"
-VOICE = "hr"        # espeak-ng Croatian (najbliže Srećki bez Piper-a)
-SPEED = "140"       # brzina govora (120–160 je sweet spot)
-PITCH = "50"        # neutralna visina glasa
+# Cache model u /tmp (Render dozvoljava)
+TTS_MODEL = "tts_models/en/ljspeech/tacotron2-DDC"
 
+tts = TTS(model_name=TTS_MODEL, progress_bar=False, gpu=False)
 
 @app.get("/")
 def health():
-    return {"status": "Brko je ziv i prica 🇭🇷"}
-
+    return "Brko je živ i priča 🇭🇷"
 
 @app.post("/tts")
-def tts(
+def tts_endpoint(
     text: str = Query(..., min_length=1, max_length=500)
 ):
     try:
-        filename = f"{TMP_DIR}/{uuid.uuid4()}.wav"
+        filename = f"/tmp/brko_{uuid.uuid4().hex}.wav"
 
-        cmd = [
-            "espeak-ng",
-            "-v", VOICE,
-            "-s", SPEED,
-            "-p", PITCH,
-            "-w", filename,
-            text
-        ]
-
-        subprocess.run(cmd, check=True)
+        tts.tts_to_file(
+            text=text,
+            file_path=filename
+        )
 
         return FileResponse(
             filename,
